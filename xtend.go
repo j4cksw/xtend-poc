@@ -19,8 +19,11 @@ type Event struct {
 }
 
 type Player struct {
-	Name string `json:"name"`
-	Conn *websocket.Conn
+	Name  string          `json:"name"`
+	Conn  *websocket.Conn `json:"-"`
+	X     int             `json:"x"`
+	Y     int             `json:"y"`
+	Color string          `json:"color"`
 }
 
 func Start(ws *websocket.Conn) {
@@ -42,10 +45,24 @@ func Start(ws *websocket.Conn) {
 
 				fmt.Println("Total users is ", len(users), " game start")
 
-				if err := websocket.JSON.Send(users[0].Conn, users[1].Name); err != nil {
+				users[0].X = 100
+				users[0].Y = 300
+				users[0].Color = "0xFFFF0B"
+				users[1].X = 700
+				users[1].Y = 300
+				users[1].Color = "0xBC1C22"
+
+				firstuser := Event{
+					Action: "render_base",
+					Data: map[string]interface{}{
+						"players": users,
+					},
+				}
+
+				if err := websocket.JSON.Send(users[0].Conn, firstuser); err != nil {
 					fmt.Println(err.Error())
 				}
-				if err := websocket.JSON.Send(users[1].Conn, users[0].Name); err != nil {
+				if err := websocket.JSON.Send(users[1].Conn, firstuser); err != nil {
 					fmt.Println(err.Error())
 				}
 			} else {
