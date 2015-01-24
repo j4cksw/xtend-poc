@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/net/websocket"
 	"net/http"
+	"os"
+
+	"golang.org/x/net/websocket"
 )
 
 var users []Player
@@ -29,7 +31,7 @@ func Login(ws *websocket.Conn) {
 func main() {
 	http.Handle("/login", websocket.Handler(Login))
 	http.Handle("/", http.FileServer(http.Dir("./web")))
-	err := http.ListenAndServe(":12345", nil)
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
 	}
