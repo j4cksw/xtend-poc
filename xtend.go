@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -16,26 +17,51 @@ type Player struct {
 	Conn *websocket.Conn
 }
 
-func Login(ws *websocket.Conn) {
-	var player Player
-	fmt.Println(websocket.JSON.Receive(ws, &player))
-	player.Conn = ws
-	users = append(users, player)
+type Message struct {
+	Sender string `json:"sender"`
+	Text   string `json:"text"`
+}
 
-	if (len(users)) == 2 {
-		websocket.JSON.Send(users[0].Conn, users[1].Name)
-		websocket.JSON.Send(users[1].Conn, users[0].Name)
+func Start(ws *websocket.Conn) {
+	var player Player
+	for websocket.JSON.Receive(ws, &player) != io.EOF {
+		player.Conn = ws
+		users = append(users, player)
+		fmt.Println(player.Name, " logged in")
+
+		if (len(users)) >= 2 {
+			fmt.Println("Total users is ", len(users), " game start")
+			if err := websocket.JSON.Send(users[0].Conn, users[1].Name); err != nil {
+				fmt.Println(err.Error())
+			}
+			if err := websocket.JSON.Send(users[1].Conn, users[0].Name); err != nil {
+				fmt.Println(err.Error())
+			}
+		}
+
 	}
-	fmt.Println(player)
+}
+
+func Boardcast(ws *websocket.Conn) {
+	var msg Message
+	for websocket.JSON.Receive(ws, &msg) != io.EOF {
+		for i := range users {
+			if users[i].Name != msg.Sender {
+				websocket.JSON.Send(users[i].Conn, msg.Text)
+				fmt.Printf("%s Boardcast %s ======> %s\n", msg.Sender, msg.Text, users[i].Name)
+			}
+		}
+
+	}
 }
 
 func main() {
-	http.Handle("/login", websocket.Handler(Login))
+	http.Handle("/api/start", websocket.Handler(Start))
 	http.Handle("/", http.FileServer(http.Dir(os.Getenv("STATIC_PATH"))))
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "5000"
+		port = "12345"
 	}
 	log.Println("Listen on port", port)
 	err := http.ListenAndServe(":"+port, nil)
