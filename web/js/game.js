@@ -10,8 +10,8 @@ function initGame(gameInfo){
 
 function create(){
     var bases = [];
-    bases.push(drawBase(0xFFFF0B, 200, 300, 100));
-    bases.push(drawBase(0xBC1C22, 600, 300, 100));
+    bases.push(drawBase(0xFFFF0B, 100, 300, 100));
+    bases.push(drawBase(0xBC1C22, 700, 300, 100));
 }
 
 function drawBase(color, x, y, size){

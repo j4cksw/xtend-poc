@@ -4,67 +4,8 @@
         <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="bower_components/phaser/build/phaser.min.js"></script>
         <script type="text/javascript" src="js/game.js"></script>
-        <script type="text/javascript">
-        function onNameEntered(){
-
-            var playerName = document.getElementById("player_name").value;
-
-            if (playerName === ""){
-                return;
-            }
-
-            disablePlayerRegistration();
-            popWaitingMessage(playerName);
-            connect(playerName)
-            //popGameScreen();
-        }
-
-        function disablePlayerRegistration(){
-            $('#player_name').prop('disabled',true);
-            $('#player_ok').prop('disabled',true);
-        }
-
-        function popWaitingMessage(playerName){
-            $('#player_wait_message').text("Ok " + playerName + " Please wait...");
-        }
-
-        function connect(playerName){
-            if (!"WebSocket" in window)
-            {
-                console.log("WebSocket is not supported by your Browser!");
-                return;
-            }
-
-            console.log("WebSocket is supported by your Browser!");
-            var ws = new WebSocket("ws://192.168.100.23:12345/api/start");
-
-            ws.onopen = function()
-            {
-                ws.send(JSON.stringify({
-                    "name":playerName
-                }));
-                console.log("Message is sent...");
-            };
-            ws.onmessage = function(evt){
-                console.log(evt);
-                popGameScreen();
-            };
-            ws.onclose = function()
-            {
-                alert("Connection is closed...");
-            };
-        }
-
-        function popGameScreen(){
-            initGame();
-            removeRegistrationElements();
-        }
-
-        function removeRegistrationElements(){
-            $('#player_registration').hide();
-            $('#player_wait_message').hide();
-        }
-        </script>
+        <script type="text/javascript" src="js/connect.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
     <body>
         <div id="player_registration">
             <h1>Hello, Please Enter Your Name</h1>
