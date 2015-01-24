@@ -55,15 +55,23 @@ func Boardcast(ws *websocket.Conn) {
 	}
 }
 
+func optionalEnv(key, defaultValue string) string {
+	var v = os.Getenv(key)
+	if v == "" {
+		return defaultValue
+	}
+	return v
+}
+
 func main() {
 	http.Handle("/api/start", websocket.Handler(Start))
-	http.Handle("/", http.FileServer(http.Dir(os.Getenv("STATIC_PATH"))))
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "12345"
-	}
+	staticPath := optionalEnv("STATIC_PATH", "web")
+	http.Handle("/", http.FileServer(http.Dir(staticPath)))
+
+	port := optionalEnv("PORT", "12345")
 	log.Println("Listen on port", port)
+
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
