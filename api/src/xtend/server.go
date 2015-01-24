@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"golang.org/x/net/websocket"
+	"io"
 	"net/http"
 )
 
@@ -15,13 +16,15 @@ type Player struct {
 
 func Login(ws *websocket.Conn) {
 	var player Player
-	fmt.Println(websocket.JSON.Receive(ws, &player))
-	player.Conn = ws
-	users = append(users, player)
+	for websocket.JSON.Receive(ws, &player) != io.EOF {
+		player.Conn = ws
+		users = append(users, player)
 
-	if (len(users)) == 2 {
-		websocket.JSON.Send(users[0].Conn, users[1].Name)
-		websocket.JSON.Send(users[1].Conn, users[0].Name)
+		if (len(users)) == 2 {
+			websocket.JSON.Send(users[0].Conn, users[1].Name)
+			websocket.JSON.Send(users[1].Conn, users[0].Name)
+		}
+
 	}
 	fmt.Println(player)
 }
