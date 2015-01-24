@@ -32,7 +32,11 @@ func main() {
 	http.Handle("/login", websocket.Handler(Login))
 	http.Handle("/", http.FileServer(http.Dir(os.Getenv("STATIC_PATH"))))
 
-	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5000"
+	}
+	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
 	}
