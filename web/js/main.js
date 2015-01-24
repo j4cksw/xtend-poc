@@ -8,8 +8,13 @@ function onNameEntered(){
 
     disablePlayerRegistration();
     popWaitingMessage(playerName);
-    //connect(playerName, popGameScreen);
-    popGameScreen();
+    connect(playerName, handleWebSocketMessage);
+    // handleWebSocketMessage({
+    //     data:{
+    //         action:"init",
+    //
+    //     }
+    // });
 }
 
 function disablePlayerRegistration(){
@@ -21,9 +26,11 @@ function popWaitingMessage(playerName){
     $('#player_wait_message').text("Ok " + playerName + " Please wait...");
 }
 
-function popGameScreen(){
+function handleWebSocketMessage(evt){
     initGame();
     removeRegistrationElements();
+    console.log(evt);
+
 }
 
 function removeRegistrationElements(){

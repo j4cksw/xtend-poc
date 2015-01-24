@@ -1,3 +1,4 @@
+var ws;
 function connect(playerName, onMessageHandler){
     if (!"WebSocket" in window)
     {
@@ -6,7 +7,7 @@ function connect(playerName, onMessageHandler){
     }
 
     console.log("WebSocket is supported by your Browser!");
-    var ws = new WebSocket("ws://192.168.100.23:12345/api/start");
+    ws = new WebSocket("ws://localhost:12345/api/start");
 
     ws.onopen = function()
     {
