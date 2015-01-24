@@ -13,15 +13,41 @@
 
             disablePlayerRegistration();
             popWaitingMessage(playerName);
+            connect(playerName)
+        }
+
+        function disablePlayerRegistration(){
+            $('#player_name').prop('disabled',true);
+            $('#player_ok').prop('disabled',true);
         }
 
         function popWaitingMessage(playerName){
             $('#player_wait_message').text("Ok " + playerName + " Please wait...");
         }
 
-        function disablePlayerRegistration(){
-            $('#player_name').prop('disabled',true);
-            $('#player_ok').prop('disabled',true);
+        function connect(playerName){
+            if (!"WebSocket" in window)
+            {
+                console.log("WebSocket is not supported by your Browser!");
+                return;
+            }
+
+            console.log("WebSocket is supported by your Browser!");
+            var ws = new WebSocket("ws://192.168.100.35:1337");
+
+            ws.onopen = function()
+            {
+                ws.send(playerName);
+                console.log("Message is sent...");
+            };
+            ws.onmessage = function(evt){
+                console.log(evt);
+            };
+            ws.onclose = function()
+            {
+                // websocket is closed.
+                alert("Connection is closed...");
+            };
         }
         </script>
     <body>
