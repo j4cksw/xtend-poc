@@ -11,7 +11,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-var users []Player
+var players []Player
 
 type Event struct {
 	Action string                 `json:"action"`
@@ -26,9 +26,16 @@ type Player struct {
 	Color string          `json:"color"`
 }
 
+func broadcast(evt Event, players []Player) {
+	for _, p := range players {
+		if err := websocket.JSON.Send(p.Conn, evt); err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 func Start(ws *websocket.Conn) {
 	var event Event
-	//for websocket.JSON.Receive(ws, &player) != io.EOF {
 	for websocket.JSON.Receive(ws, &event) != io.EOF {
 
 		switch event.Action {
@@ -36,39 +43,33 @@ func Start(ws *websocket.Conn) {
 			var player Player
 			err := mapstructure.Decode(event.Data, &player)
 			if err != nil {
-
+				log.Fatal(err)
 			}
 			player.Conn = ws
-			users = append(users, player)
+			players = append(players, player)
 			fmt.Println(player.Name, " logged in")
-			if (len(users)) >= 2 {
 
-				fmt.Println("Total users is ", len(users), " game start")
+			if len(players) >= 2 {
+				fmt.Println("Total players is ", len(players), " game start")
 
-				users[0].X = 100
-				users[0].Y = 300
-				users[0].Color = "0xFFFF0B"
-				users[1].X = 700
-				users[1].Y = 300
-				users[1].Color = "0xBC1C22"
+				players[0].X = 100
+				players[0].Y = 300
+				players[0].Color = "0xFFFF0B"
+				players[1].X = 700
+				players[1].Y = 300
+				players[1].Color = "0xBC1C22"
 
-				firstuser := Event{
+				event := Event{
 					Action: "render_base",
 					Data: map[string]interface{}{
-						"players": users,
+						"players": players,
 					},
 				}
 
-				if err := websocket.JSON.Send(users[0].Conn, firstuser); err != nil {
-					fmt.Println(err.Error())
-				}
-				if err := websocket.JSON.Send(users[1].Conn, firstuser); err != nil {
-					fmt.Println(err.Error())
-				}
+				broadcast(event, players)
 			} else {
 				websocket.JSON.Send(player.Conn, Event{Action: "init"})
 			}
-
 		case "":
 		}
 
