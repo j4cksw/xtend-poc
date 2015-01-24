@@ -2,6 +2,8 @@
     <head>
         <title>Xtend-POC</title>
         <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="bower_components/phaser/build/phaser.min.js"></script>
+        <script type="text/javascript" src="js/game.js"></script>
         <script type="text/javascript">
         function onNameEntered(){
 
@@ -13,7 +15,8 @@
 
             disablePlayerRegistration();
             popWaitingMessage(playerName);
-            connect(playerName)
+            //connect(playerName)
+            popGameScreen();
         }
 
         function disablePlayerRegistration(){
@@ -33,21 +36,33 @@
             }
 
             console.log("WebSocket is supported by your Browser!");
-            var ws = new WebSocket("ws://192.168.100.35:1337");
+            var ws = new WebSocket("ws://192.168.100.23:12345/api/start");
 
             ws.onopen = function()
             {
-                ws.send(playerName);
+                ws.send(JSON.stringify({
+                    "name":playerName
+                }));
                 console.log("Message is sent...");
             };
             ws.onmessage = function(evt){
                 console.log(evt);
+                popGameScreen();
             };
             ws.onclose = function()
             {
-                // websocket is closed.
                 alert("Connection is closed...");
             };
+        }
+
+        function popGameScreen(){
+            initGame();
+            removeRegistrationElements();
+        }
+
+        function removeRegistrationElements(){
+            $('#player_registration').hide();
+            $('#player_wait_message').hide();
         }
         </script>
     <body>
