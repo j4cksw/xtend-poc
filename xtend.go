@@ -30,7 +30,8 @@ func Login(ws *websocket.Conn) {
 
 func main() {
 	http.Handle("/login", websocket.Handler(Login))
-	http.Handle("/", http.FileServer(http.Dir("./web")))
+	http.Handle("/", http.FileServer(http.Dir(os.Getenv("STATIC_PATH"))))
+
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
