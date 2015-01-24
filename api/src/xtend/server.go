@@ -27,8 +27,7 @@ func Login(ws *websocket.Conn) {
 }
 
 func main() {
-	http.Handle("/login", websocket.Handler(Login))
-	http.Handle("/", http.FileServer(http.Dir(".")))
+	http.Handle("/api/start", websocket.Handler(Login))
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
