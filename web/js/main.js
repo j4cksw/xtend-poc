@@ -1,6 +1,8 @@
+var playerName;
+
 function onNameEntered(){
 
-    var playerName = document.getElementById("player_name").value;
+    playerName = document.getElementById("player_name").value;
 
     if (playerName === ""){
         return;
@@ -10,10 +12,21 @@ function onNameEntered(){
     popWaitingMessage(playerName);
     connect(playerName, handleWebSocketMessage);
     // handleWebSocketMessage({
-    //     data:{
-    //         action:"init",
-    //
+    //     data:"{\"action\":\"init\"}"
+    // });
+    // var sampleBase = {
+    //     action: "render_base",
+    //     data: {
+    //         players: [{
+    //             name: "yourname",
+    //             x: 11,
+    //             y: 12,
+    //             color: "0xfff"
+    //         }]
     //     }
+    // };
+    // handleWebSocketMessage({
+    //     data: JSON.stringify(sampleBase)
     // });
 }
 
@@ -24,16 +37,4 @@ function disablePlayerRegistration(){
 
 function popWaitingMessage(playerName){
     $('#player_wait_message').text("Ok " + playerName + " Please wait...");
-}
-
-function handleWebSocketMessage(evt){
-    initGame();
-    removeRegistrationElements();
-    console.log(evt);
-
-}
-
-function removeRegistrationElements(){
-    $('#player_registration').hide();
-    $('#player_wait_message').hide();
 }

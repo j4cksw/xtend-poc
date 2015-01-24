@@ -12,14 +12,16 @@ function connect(playerName, onMessageHandler){
     ws.onopen = function()
     {
         ws.send(JSON.stringify({
-            "name":playerName
+            action:"new",
+            data:{
+                name:playerName
+            }
         }));
         console.log("Message is sent...");
     };
 
     ws.onmessage = function(evt){
-        console.log(evt);
-        onMessageHandler();
+        onMessageHandler(evt);
     };
 
     ws.onclose = function()
