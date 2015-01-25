@@ -3,9 +3,13 @@ Library    Selenium2Library
 
 *** Test cases ***
 Open 2 Browsers For Testing Game
+    Open Game For Player    Player1
+    Open Game For Player    Player2
+
+*** Keywords ***
+Open Game For Player
+    [Arguments]    ${player name}
     Open Browser    http://localhost:4000    gc
-    Input Text    player_name    Player1
-    Click Button    OK
-    Open Browser    http://localhost:4000    gc
-    Input Text    player_name    Player2
+    Maximize Browser Window
+    Input Text    player_name    ${player name}
     Click Button    OK

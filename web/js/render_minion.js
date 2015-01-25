@@ -1,6 +1,11 @@
-function drawMinion(info){
+function renderMinion(info){
     console.log("Minion built");
-    var minion = game.add.graphics(0, 0);
-    minion.beginFill(info.color, 1);
-    minion.drawRect(info.x+(info.size/2), info.y, 8, 8);
+    console.log(info);
+
+    info.minions.forEach(function(minionInfo){
+        var minion = game.add.graphics(0, 0);
+        minion.beginFill(minionInfo.color, 1);
+        minion.drawRect(minionInfo.x, minionInfo.y, 8, 8);
+    });
+    //minions[info.name].add(minion);
 }
