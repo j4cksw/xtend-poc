@@ -89,12 +89,13 @@ func Start(ws *websocket.Conn) {
 
 			fmt.Println(player)
 
+			var minion Minion
 			for _, p := range players {
 				if player.Name != p.Name {
 					continue
 				}
 
-				var minion = Minion{PlayerName: p.Name, X: RandomPositionX(p.X, 60), Y: RandomPositionY(p.Y, 60), Color: p.Color}
+				minion = Minion{PlayerName: p.Name, X: RandomPositionX(p.X, 60), Y: RandomPositionY(p.Y, 60), Color: p.Color}
 				minions = append(minions, minion)
 				fmt.Println(players)
 			}
@@ -102,7 +103,7 @@ func Start(ws *websocket.Conn) {
 			var renderMinionEvt = Event{
 				Action: "render_minion",
 				Data: map[string]interface{}{
-					"minions": minions,
+					"minion": minion,
 				},
 			}
 			broadcast(renderMinionEvt, players)
