@@ -9,7 +9,7 @@ function drawBase(color, x, y, size, name){
 
     if(name == playerName){
         timer = game.time.create(false);
-        timer.loop(1000, requestDrawMinion, this);
+        timer.loop(3000, requestDrawMinion, this);
         timer.start();
     }
 

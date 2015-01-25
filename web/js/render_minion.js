@@ -1,11 +1,13 @@
 function renderMinion(info){
     console.log("Minion built");
-    console.log(info);
-
-    info.minions.forEach(function(minionInfo){
-        var minion = game.add.graphics(0, 0);
-        minion.beginFill(minionInfo.color, 1);
-        minion.drawRect(minionInfo.x, minionInfo.y, 8, 8);
-    });
-    //minions[info.name].add(minion);
+    var g = game.add.graphics(info.minion.x, info.minion.y);
+    g.beginFill(info.minion.color, 1);
+    var minion = g.drawRect(0, 0, 8, 8);
+    minions[info.minion.playerName].add(minion);
+    if( (playerName === info.minion.playerName) && isRallyPointSet() ){
+        moveMinion(minion, {
+            x: rallyPoint.x,
+            y: rallyPoint.y
+        });
+    }
 }

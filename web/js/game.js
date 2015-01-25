@@ -10,17 +10,29 @@ function initGame(gameData){
     });
 
     function create(){
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+
         gameData.players.forEach(function(baseInfo){
             console.log("building base");
             minions[baseInfo.name] = game.add.group();
             drawBase(baseInfo.color, baseInfo.x, baseInfo.y, 100, baseInfo.name);
         });
+
+        game.input.onTap.add(function(pointer){
+
+            setRallyPoint(pointer.x, pointer.y);
+
+            minions[playerName].forEach(function(minion){
+                moveMinion(minion, pointer);
+            }, this);
+
+        })
     }
 
     function update(){
-        if (game.input.activePointer.isDown)
-        {
-            console.log(game.input.activePointer);
-        }
+        // if (game.input.)
+        // {
+        //     console.log(game.input.activePointer);
+        // }
     }
 }

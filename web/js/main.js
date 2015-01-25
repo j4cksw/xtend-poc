@@ -11,23 +11,6 @@ function onNameEntered(){
     disablePlayerRegistration();
     popWaitingMessage(playerName);
     connect(playerName, handleWebSocketMessage);
-    // handleWebSocketMessage({
-    //     data:"{\"action\":\"init\"}"
-    // });
-    // var sampleBase = {
-    //     action: "render_base",
-    //     data: {
-    //         players: [{
-    //             name: "yourname",
-    //             x: 11,
-    //             y: 12,
-    //             color: "0xfff"
-    //         }]
-    //     }
-    // };
-    // handleWebSocketMessage({
-    //     data: JSON.stringify(sampleBase)
-    // });
 }
 
 function disablePlayerRegistration(){
