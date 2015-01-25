@@ -93,32 +93,31 @@ func Start(ws *websocket.Conn) {
 
 				var minion = Minion{X: RandomPositionX(p.X, 60), Y: RandomPositionY(p.Y, 60), Color: p.Color}
 				p.Minions = append(p.Minions, minion)
-				var renderMinionEvt = Event{
-					Action: "render_minion",
-					Data: map[string]interface{}{
-						"x":     minion.X,
-						"y":     minion.Y,
-						"color": minion.Color,
-					},
-				}
 
 				players[i] = p // set it back because it pass by value
 				fmt.Println(players)
-				websocket.JSON.Send(p.Conn, renderMinionEvt)
 			}
+
+			var renderMinionEvt = Event{
+				Action: "render_minion",
+				Data: map[string]interface{}{
+					"minions": append(players[0].Minions, players[1].Minions...),
+				},
+			}
+			broadcast(renderMinionEvt, players)
 		}
 	}
 }
 
 func RandomPositionX(x, radius int) float64 {
 	// random degree [0, 360]
-	var a = rand.New(rand.NewSource(time.Now().UnixNano())).Intn(361)
+	var a = rand.New(rand.NewSource(time.Now().UTC().UnixNano())).Intn(361)
 	return float64(x) + float64(radius) + math.Cos(float64(a))
 }
 
 func RandomPositionY(y, radius int) float64 {
 	// random degree [0, 360]
-	var a = rand.New(rand.NewSource(time.Now().UnixNano())).Intn(361)
+	var a = rand.New(rand.NewSource(time.Now().UTC().UnixNano())).Intn(361)
 	return float64(y) + float64(radius) + math.Sin(float64(a))
 }
 
