@@ -14,7 +14,10 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-var players []Player
+var (
+	players []Player
+	minions []Minion
+)
 
 type Event struct {
 	Action string                 `json:"action"`
@@ -22,18 +25,18 @@ type Event struct {
 }
 
 type Minion struct {
-	X     float64 `json:"x"`
-	Y     float64 `json:"y"`
-	Color string  `json:"color"`
+	PlayerName string  `json:"playerName"`
+	X          float64 `json:"x"`
+	Y          float64 `json:"y"`
+	Color      string  `json:"color"`
 }
 
 type Player struct {
-	Name    string          `json:"name"`
-	Conn    *websocket.Conn `json:"-"`
-	X       int             `json:"x"`
-	Y       int             `json:"y"`
-	Color   string          `json:"color"`
-	Minions []Minion
+	Name  string          `json:"name"`
+	Conn  *websocket.Conn `json:"-"`
+	X     int             `json:"x"`
+	Y     int             `json:"y"`
+	Color string          `json:"color"`
 }
 
 func broadcast(evt Event, players []Player) {
@@ -86,22 +89,20 @@ func Start(ws *websocket.Conn) {
 
 			fmt.Println(player)
 
-			for i, p := range players {
+			for _, p := range players {
 				if player.Name != p.Name {
 					continue
 				}
 
-				var minion = Minion{X: RandomPositionX(p.X, 60), Y: RandomPositionY(p.Y, 60), Color: p.Color}
-				p.Minions = append(p.Minions, minion)
-
-				players[i] = p // set it back because it pass by value
+				var minion = Minion{PlayerName: p.Name, X: RandomPositionX(p.X, 60), Y: RandomPositionY(p.Y, 60), Color: p.Color}
+				minions = append(minions, minion)
 				fmt.Println(players)
 			}
 
 			var renderMinionEvt = Event{
 				Action: "render_minion",
 				Data: map[string]interface{}{
-					"minions": append(players[0].Minions, players[1].Minions...),
+					"minions": minions,
 				},
 			}
 			broadcast(renderMinionEvt, players)
