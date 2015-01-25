@@ -14,6 +14,10 @@ import (
 	"golang.org/x/net/websocket"
 )
 
+func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
+}
+
 var (
 	players []Player
 	minions []Minion
@@ -99,7 +103,7 @@ func Start(ws *websocket.Conn) {
 				minions = append(minions, minion)
 				fmt.Println(players)
 			}
-
+			fmt.Println(minions)
 			var renderMinionEvt = Event{
 				Action: "render_minion",
 				Data: map[string]interface{}{
@@ -107,20 +111,27 @@ func Start(ws *websocket.Conn) {
 				},
 			}
 			broadcast(renderMinionEvt, players)
+		case "request_move_minion":
+			broadcast(Event{
+				Action: "move_minion",
+				Data:   event.Data,
+			}, players)
 		}
 	}
 }
 
 func RandomPositionX(x, radius int) float64 {
 	// random degree [0, 360]
-	var a = rand.New(rand.NewSource(time.Now().UTC().UnixNano())).Intn(361)
-	return float64(x) + float64(radius) + math.Cos(float64(a))
+	var a = rand.Intn(361)
+	fmt.Println(math.Cos(float64(a)))
+	return float64(x) + float64(radius)*math.Cos(float64(a))
 }
 
 func RandomPositionY(y, radius int) float64 {
 	// random degree [0, 360]
-	var a = rand.New(rand.NewSource(time.Now().UTC().UnixNano())).Intn(361)
-	return float64(y) + float64(radius) + math.Sin(float64(a))
+	var a = rand.Intn(361)
+	fmt.Println(math.Sin(float64(a)))
+	return float64(y) + float64(radius)*math.Sin(float64(a))
 }
 
 func optionalEnv(key, defaultValue string) string {
