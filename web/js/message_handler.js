@@ -8,12 +8,6 @@ function handleWebSocketMessage(evt){
             players:eventData.data.players
         });
         removeRegistrationElements();
-        // setTimeout(function(){
-        //     eventData.data.players.forEach(function(baseInfo){
-        //         console.log("building base");
-        //         drawBase(baseInfo.color, baseInfo.x, baseInfo.y, 100, baseInfo.name);
-        //     });
-        // }, 500);
     }
     if( eventData.action === "render_minion" ){
         renderMinion(eventData.data)
