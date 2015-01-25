@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
+	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/mitchellh/mapstructure"
 	"golang.org/x/net/websocket"
@@ -18,12 +21,19 @@ type Event struct {
 	Data   map[string]interface{} `json:"data,omitempty"`
 }
 
+type Minion struct {
+	X     float64 `json:"x"`
+	Y     float64 `json:"y"`
+	Color string  `json:"color"`
+}
+
 type Player struct {
-	Name  string          `json:"name"`
-	Conn  *websocket.Conn `json:"-"`
-	X     int             `json:"x"`
-	Y     int             `json:"y"`
-	Color string          `json:"color"`
+	Name    string          `json:"name"`
+	Conn    *websocket.Conn `json:"-"`
+	X       int             `json:"x"`
+	Y       int             `json:"y"`
+	Color   string          `json:"color"`
+	Minions []Minion
 }
 
 func broadcast(evt Event, players []Player) {
@@ -70,10 +80,46 @@ func Start(ws *websocket.Conn) {
 			} else {
 				websocket.JSON.Send(player.Conn, Event{Action: "init"})
 			}
-		case "":
-		}
+		case "request_minion":
+			var player Player
+			mapstructure.Decode(event.Data, &player)
 
+			fmt.Println(player)
+
+			for i, p := range players {
+				if player.Name != p.Name {
+					continue
+				}
+
+				var minion = Minion{X: RandomPositionX(p.X, 60), Y: RandomPositionY(p.Y, 60), Color: p.Color}
+				p.Minions = append(p.Minions, minion)
+				var renderMinionEvt = Event{
+					Action: "render_minion",
+					Data: map[string]interface{}{
+						"x":     minion.X,
+						"y":     minion.Y,
+						"color": minion.Color,
+					},
+				}
+
+				players[i] = p // set it back because it pass by value
+				fmt.Println(players)
+				websocket.JSON.Send(p.Conn, renderMinionEvt)
+			}
+		}
 	}
+}
+
+func RandomPositionX(x, radius int) float64 {
+	// random degree [0, 360]
+	var a = rand.New(rand.NewSource(time.Now().UnixNano())).Intn(361)
+	return float64(x) + float64(radius) + math.Cos(float64(a))
+}
+
+func RandomPositionY(y, radius int) float64 {
+	// random degree [0, 360]
+	var a = rand.New(rand.NewSource(time.Now().UnixNano())).Intn(361)
+	return float64(y) + float64(radius) + math.Sin(float64(a))
 }
 
 func optionalEnv(key, defaultValue string) string {
