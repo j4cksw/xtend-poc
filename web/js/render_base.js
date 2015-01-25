@@ -3,7 +3,6 @@ function drawBase(color, x, y, size, name){
     base.beginFill(color, 1);
     base.drawCircle(x, y, size);
 
-    //var text = "- phaser -\n with a sprinkle of \n pixi dust.";
     var style = { font: "32px Arial", fill: "#FFFFFF", align: "center" };
     var t = game.add.text(x, y+(size/2), name, style);
 

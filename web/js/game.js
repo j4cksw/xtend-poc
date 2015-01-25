@@ -15,6 +15,9 @@ function initGame(gameData){
         gameData.players.forEach(function(baseInfo){
             console.log("building base");
             minions[baseInfo.name] = game.add.group();
+            minions[baseInfo.name].enableBody = true;
+            minions[baseInfo.name].physicsBodyType = Phaser.Physics.ARCADE;
+
             drawBase(baseInfo.color, baseInfo.x, baseInfo.y, 100, baseInfo.name);
         });
 
@@ -26,7 +29,7 @@ function initGame(gameData){
                 moveMinion(minion, pointer);
             }, this);
 
-        })
+        });
     }
 
     function update(){
