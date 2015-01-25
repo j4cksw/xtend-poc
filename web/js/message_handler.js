@@ -26,19 +26,11 @@ function handleWebSocketMessage(evt){
         //     y: 10,
         //     color: ""
         // }
-        drawMinion(eventData.data)
+        renderMinion(eventData.data)
     }
 }
 
 function removeRegistrationElements(){
     $('#player_registration').hide();
     $('#player_wait_message').hide();
-}
-
-function drawMinion(info){
-    console.log("Minion built");
-    var minion = game.add.graphics(0, 0);
-    minion.beginFill(info.color, 1);
-    minion.drawRect(info.x+(info.size/2), info.y, 8, 8);
-
 }
